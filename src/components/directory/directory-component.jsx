@@ -3,7 +3,6 @@ import CategoryItem from '../category-item/category-item.component';
 import './directory-styles.scss';
 
 const Directory = ({categories}) => {
-    console.log(categories)
     //const result = Object.entries(categories);
   return (
     <div className="categories-container">
