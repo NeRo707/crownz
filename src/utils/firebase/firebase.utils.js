@@ -1,9 +1,12 @@
+
 import { initializeApp } from 'firebase/app';
+
 import { 
   getAuth,
   signInWithRedirect,
   signInWithPopup,  
-  GoogleAuthProvider
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword
   } from 'firebase/auth';
 
   import {
@@ -33,11 +36,17 @@ const firebaseConfig = {
 
 export const auth = getAuth();
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider);
 
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {displayName: 'tazuna'}
+  ) => {
+
+  if(!userAuth) return;
   const userDocRef = doc(db, 'users', userAuth.uid);
   console.log(userDocRef);
   const userSnapshot = await getDoc(userDocRef);
@@ -54,7 +63,8 @@ if(!userSnapshot.exists()){
     await setDoc(userDocRef, {
       displayName,
       email,
-      createdAt
+      createdAt,
+      ...additionalInformation
     });
   }catch (error){
     console.log("error making acc ", error.message);
@@ -65,3 +75,10 @@ if(!userSnapshot.exists()){
 
 }
 //if exists 
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+
+  if(!email || !password) return;
+
+  return await createUserWithEmailAndPassword(auth, email, password);
+}
